@@ -9,140 +9,144 @@ import {
   ArrowDownRight,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Package,
+  Layers,
+  Circle
 } from 'lucide-react';
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer
-} from 'recharts';
 import { cn } from '../lib/utils';
 
-const data = [
-  { name: 'Mon', sales: 4000, quiz: 2400 },
-  { name: 'Tue', sales: 3000, quiz: 1398 },
-  { name: 'Wed', sales: 2000, quiz: 9800 },
-  { name: 'Thu', sales: 2780, quiz: 3908 },
-  { name: 'Fri', sales: 1890, quiz: 4800 },
-  { name: 'Sat', sales: 2390, quiz: 3800 },
-  { name: 'Sun', sales: 3490, quiz: 4300 },
-];
-
-const StatCard = ({ title, value, change, trend, icon: Icon }: any) => (
-  <div className="glass p-6 rounded-3xl relative overflow-hidden group">
-    <div className="flex justify-between items-start mb-4">
-      <div className={cn("p-3 rounded-2xl bg-olive/5 text-olive group-hover:bg-olive group-hover:text-cream transition-colors")}>
-        <Icon size={24} />
-      </div>
-      <div className={cn("flex items-center gap-1 text-sm font-medium", trend === 'up' ? 'text-green-600' : 'text-red-600')}>
-        {trend === 'up' ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-        {change}%
-      </div>
+const MetricCard = ({ title, value, change, trend, icon: Icon, color = "emerald" }: any) => (
+  <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group">
+    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+      <Icon size={48} />
     </div>
-    <p className="text-sage text-sm mb-1">{title}</p>
-    <h3 className="text-3xl font-bold text-olive tracking-tight">{value}</h3>
+    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{title}</p>
+    <h3 className="text-2xl font-black text-slate-800 tracking-tight">{value}</h3>
+    <div className="flex items-center gap-1.5 mt-2">
+      <span className={cn("text-[10px] font-black px-1.5 py-0.5 rounded", 
+        trend === 'up' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50'
+      )}>
+        {trend === 'up' ? '↑' : '↓'} {change}%
+      </span>
+      <span className="text-[10px] text-slate-400 font-bold">vs last month</span>
+    </div>
   </div>
 );
 
 export const DashboardOverview = () => {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-8"
-    >
-      <div className="flex justify-between items-end">
+    <div className="space-y-6">
+      {/* Header Info */}
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-4xl font-bold text-olive tracking-tight font-arabic">أهلاً بك، أدمن</h2>
-          <p className="text-sage mt-1">Here's what's happening with HerbaSense today.</p>
+          <h2 className="text-xl font-bold text-slate-800 uppercase tracking-tight">Main Command Center</h2>
+          <p className="text-xs text-slate-400 font-medium">Real-time herbal empire synchronization active.</p>
         </div>
-        <div className="flex gap-3">
-          <button className="bg-white border border-sage/20 px-4 py-2 rounded-xl text-sm font-medium text-olive hover:bg-beige transition-colors">Download Report</button>
-          <button className="bg-olive text-cream px-4 py-2 rounded-xl text-sm font-medium hover:bg-olive/90 transition-colors">Manage Store</button>
+        <div className="flex gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            System Live
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Revenue" value="$42,850" change="12.5" trend="up" icon={TrendingUp} />
-        <StatCard title="Total Orders" value="1,240" change="8.2" trend="up" icon={ShoppingCart} />
-        <StatCard title="Quiz Completions" value="8,420" change="2.4" trend="down" icon={Users} />
-        <StatCard title="Active Products" value="156" change="14.3" trend="up" icon={ShoppingBag} />
+      {/* KPI Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard title="Total Revenue" value="$42,850" change="12.5" trend="up" icon={TrendingUp} />
+        <MetricCard title="Active Orders" value="184" change="8.2" trend="up" icon={ShoppingCart} />
+        <MetricCard title="Quiz Success" value="2.4k" change="4.1" trend="up" icon={Users} />
+        <MetricCard title="Avg Conversion" value="4.8%" change="0.2" trend="down" icon={ShoppingBag} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 glass p-8 rounded-3xl">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h4 className="text-xl font-bold text-olive">Sales vs Quiz Activity</h4>
-              <p className="text-sm text-sage">Weekly performance analysis</p>
+      {/* Main Grid */}
+      <div className="grid grid-cols-12 gap-6">
+        {/* Activity Feed */}
+        <div className="col-span-12 lg:col-span-8 bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col overflow-hidden">
+          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Layers size={18} className="text-emerald-600" />
+              <h4 className="font-bold text-slate-800 text-sm">System Operations Log</h4>
             </div>
-            <select className="bg-beige/50 border-none rounded-lg text-sm px-3 py-1 text-olive focus:ring-1 focus:ring-olive/20">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-            </select>
           </div>
-          <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#5A6344" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#5A6344" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorQuiz" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8DA18E" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#8DA18E" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#8DA18E" opacity={0.1} />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#8DA18E', fontSize: 12}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#8DA18E', fontSize: 12}} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: 'white', borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
-                  itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
-                />
-                <Area type="monotone" dataKey="sales" stroke="#5A6344" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
-                <Area type="monotone" dataKey="quiz" stroke="#8DA18E" strokeWidth={3} fillOpacity={1} fill="url(#colorQuiz)" />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="p-0">
+             <table className="w-full text-left">
+               <thead>
+                 <tr className="bg-slate-50 text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                   <th className="px-6 py-3">Event Identity</th>
+                   <th className="px-6 py-3">Type</th>
+                   <th className="px-6 py-3">Timestamp</th>
+                   <th className="px-6 py-3 text-right">Status</th>
+                 </tr>
+               </thead>
+               <tbody className="divide-y divide-slate-50">
+                 {[
+                   { id: '#EV-9942', type: 'Purchase', user: 'Layla Ahmed', action: 'placed order for $124.00', time: '2 mins ago', status: 'Pending', color: 'amber' },
+                   { id: '#EV-9941', type: 'Quiz', user: 'Zaid Kareem', action: 'completed Calm Protocol', time: '12 mins ago', status: 'Success', color: 'emerald' },
+                   { id: '#EV-9940', type: 'System', user: 'Daemon', action: 'optimized SEO Meta v2.4', time: '45 mins ago', status: 'Complete', color: 'slate' },
+                   { id: '#EV-9939', type: 'Stock', user: 'Warehouse', action: 'Low Stock: Lavender Tea', time: '1 hour ago', status: 'Alert', color: 'red' },
+                 ].map((event) => (
+                   <tr key={event.id} className="hover:bg-slate-50 transition-colors group text-xs">
+                     <td className="px-6 py-4">
+                       <div className="font-bold text-slate-800">{event.user}</div>
+                       <div className="text-[9px] text-slate-400 font-bold uppercase">{event.id}</div>
+                     </td>
+                     <td className="px-6 py-4">
+                       <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter">
+                         {event.type}
+                       </span>
+                     </td>
+                     <td className="px-6 py-4 text-slate-400 font-medium">{event.time}</td>
+                     <td className="px-6 py-4 text-right">
+                        <span className={cn(
+                          "px-2 py-0.5 rounded-full text-[9px] font-black uppercase border",
+                          event.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                          event.color === 'amber' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                          event.color === 'red' ? 'bg-red-50 text-red-600 border-red-100' :
+                          'bg-slate-100 text-slate-600 border-slate-200'
+                        )}>
+                          {event.status}
+                        </span>
+                     </td>
+                   </tr>
+                 ))}
+               </tbody>
+             </table>
           </div>
         </div>
 
-        <div className="glass p-8 rounded-3xl">
-          <h4 className="text-xl font-bold text-olive mb-6">Recent Activity</h4>
-          <div className="space-y-6">
-            {[
-              { id: 1, type: 'order', user: 'Layla Ahmed', action: 'placed an order for', target: 'Mints Blend', time: '2 mins ago', icon: ShoppingCart },
-              { id: 2, type: 'quiz', user: 'Zaid Kareem', action: 'completed quiz', target: 'Herbal IQ', time: '12 mins ago', icon: CheckCircle2 },
-              { id: 3, type: 'alert', user: 'System', action: 'Low stock alert', target: 'Lavender Tea', time: '1 hour ago', icon: AlertCircle },
-              { id: 4, type: 'order', user: 'Sara Omer', action: 'refunded', target: '#ORD-928', time: '3 hours ago', icon: Clock },
-            ].map((item) => (
-              <div key={item.id} className="flex gap-4">
-                <div className={cn("w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0", 
-                  item.type === 'order' ? 'bg-blue-50 text-blue-600' : 
-                  item.type === 'quiz' ? 'bg-green-50 text-green-600' : 
-                  'bg-amber-50 text-amber-600'
-                )}>
-                  <item.icon size={18} />
-                </div>
-                <div>
-                  <p className="text-sm">
-                    <span className="font-bold text-olive">{item.user}</span>{' '}
-                    <span className="text-sage">{item.action}</span>{' '}
-                    <span className="font-medium text-olive">{item.target}</span>
-                  </p>
-                  <p className="text-[10px] text-sage mt-1 uppercase tracking-wider">{item.time}</p>
-                </div>
-              </div>
-            ))}
+        {/* Right Sidebar Widget */}
+        <div className="col-span-12 lg:col-span-4 space-y-6">
+          <div className="bg-slate-900 rounded-[2.5rem] p-6 text-white relative overflow-hidden">
+             <div className="relative z-10">
+               <p className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-4">Master Distribution</p>
+               <h4 className="text-2xl font-black mb-2">12,042</h4>
+               <p className="text-[11px] text-white/50 leading-relaxed mb-6 font-bold uppercase tracking-tight">Total Blends Distributed Globally via AI Logic</p>
+               <div className="w-full bg-white/10 h-1.5 rounded-full mb-2">
+                 <div className="bg-emerald-500 h-full w-[88%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+               </div>
+               <div className="flex justify-between text-[10px] font-black">
+                 <span className="text-emerald-400">88% QUOTA ACHIEVED</span>
+                 <span className="text-white/30">15.0K GOAL</span>
+               </div>
+             </div>
           </div>
-          <button className="w-full mt-8 py-3 rounded-2xl bg-beige text-olive hover:bg-sage/10 transition-colors text-sm font-bold">View All Activity</button>
+
+          <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
+             <h4 className="font-bold text-slate-800 text-xs uppercase tracking-widest mb-4">Quick Protocols</h4>
+             <div className="grid grid-cols-2 gap-3">
+               <button className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-emerald-500 transition-colors group">
+                 <Package className="text-slate-400 group-hover:text-emerald-600 transition-colors mb-2" size={20} />
+                 <span className="text-[10px] font-black text-slate-800 uppercase">Inventory</span>
+               </button>
+               <button className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-emerald-500 transition-colors group">
+                 <Circle className="text-slate-400 group-hover:text-emerald-600 transition-colors mb-2" size={20} />
+                 <span className="text-[10px] font-black text-slate-800 uppercase">Snapshot</span>
+               </button>
+             </div>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };

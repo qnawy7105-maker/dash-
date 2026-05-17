@@ -21,24 +21,16 @@ app.post("/api/ai/generate", async (req, res) => {
       return res.status(500).json({ error: "Gemini API key is not configured" });
     }
 
-    const ai = new GoogleGenAI({ 
-  apiKey,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    }
-  }
-});
+    const genAI = new GoogleGenAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const result = await ai.models.generateContent({
-  model: "gemini-3-flash-preview",
-  contents: `You are an expert copywriter for a premium herbal ecommerce brand 'HerbaSense'. 
+    const promptText = `You are an expert copywriter for a premium herbal ecommerce brand 'HerbaSense'. 
        Context: ${context}
        User Request: ${prompt}
-       Provide high-quality, elegant content.`
-});
+       Provide high-quality, elegant content.`;
 
-const responseText = result.text;
+    const result = await model.generateContent(promptText);
+    const responseText = result.response.text();
     res.json({ text: responseText });
   } catch (error) {
     console.error("AI Generation Error:", error);

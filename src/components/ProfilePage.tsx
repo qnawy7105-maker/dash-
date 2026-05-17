@@ -10,6 +10,8 @@ export const ProfilePage = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      localStorage.removeItem('herbasense_admin_session');
+      window.location.reload(); // Hard reset for clean state
     } catch (error) {
       console.error('Logout failed:', error);
     }
