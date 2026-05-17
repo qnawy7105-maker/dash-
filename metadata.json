@@ -1,0 +1,6 @@
+{
+  "name": "HerbaSense Admin Console",
+  "description": "Premium AI-powered CMS and Control Panel for Herbal Ecommerce and Intelligence Quiz systems.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

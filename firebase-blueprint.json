@@ -1,0 +1,84 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Herbal product available in the store",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "category": { "type": "string" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "stock": { "type": "number" },
+        "sku": { "type": "string" },
+        "seo": { "$ref": "SeoMetadata" },
+        "status": { "type": "string", "enum": ["active", "draft", "out_of_stock"] },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "status"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase record",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "items": { "type": "array" },
+        "total": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "processing", "shipped", "delivered", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "QuizConfig": {
+      "title": "Quiz Config",
+      "description": "Questions and logic for the herbal quiz",
+      "type": "object",
+      "properties": {
+        "questions": { "type": "array" },
+        "logic": { "type": "object" },
+        "recommendations": { "type": "object" }
+      }
+    },
+    "SiteSection": {
+      "title": "Site Section",
+      "description": "A dynamic section on the homepage",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "content": { "type": "object" },
+        "order": { "type": "number" },
+        "visible": { "type": "boolean" }
+      }
+    },
+    "Settings": {
+      "title": "Site Settings",
+      "description": "Global theme and SEO settings",
+      "type": "object",
+      "properties": {
+        "colors": { "type": "object" },
+        "typography": { "type": "object" },
+        "seo": { "$ref": "SeoMetadata" },
+        "logo": { "type": "string" }
+      }
+    },
+    "SeoMetadata": {
+      "title": "SEO Metadata",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "keywords": { "type": "array" }
+      }
+    }
+  },
+  "firestore": {
+    "products": { "schema": "Product", "description": "Store products" },
+    "orders": { "schema": "Order", "description": "Customer orders" },
+    "quiz": { "schema": "QuizConfig", "description": "Quiz configuration" },
+    "sections": { "schema": "SiteSection", "description": "Homepage sections" },
+    "settings": { "schema": "Settings", "description": "Global settings" },
+    "media": { "schema": "object", "description": "Media library metadata" },
+    "users": { "schema": "object", "description": "Admin and customer profiles" }
+  }
+}

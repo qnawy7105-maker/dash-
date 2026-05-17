@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sage: #8DA18E;
+  --color-olive: #2C362B;
+  --color-olive-light: #5A6344;
+  --color-cream: #F8F9F5;
+  --color-emerald: #10B981;
+  --color-emerald-light: #34D399;
+  --color-slate-50: #F8FAFC;
+  --color-slate-100: #F1F5F9;
+  --color-slate-200: #E2E8F0;
+  --color-slate-800: #1E293B;
+  --color-slate-900: #0F172A;
+
+  --font-sans: "Inter", "Cairo", system-ui, sans-serif;
+  --font-arabic: "Cairo", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 font-sans antialiased;
+  }
+}
+
+.glass {
+  @apply bg-white border border-slate-200 shadow-sm transition-shadow hover:shadow-md;
+}
+
+.high-density-text {
+  @apply text-xs leading-relaxed text-slate-500;
+}
+
+/* Custom transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
