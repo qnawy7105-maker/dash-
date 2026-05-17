@@ -10,10 +10,11 @@ import { CMSPanel } from './components/CMSPanel';
 import { QuizManager } from './components/QuizManager';
 import { ThemeSettings } from './components/ThemeSettings';
 import { MediaLibrary } from './components/MediaLibrary';
+import { ProfilePage } from './components/ProfilePage';
 import { useUIStore } from './lib/store';
 import { cn } from './lib/utils';
 import { LogIn, Bell, Settings as SettingsIcon, Search, Menu, Moon, Sun } from 'lucide-react';
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const PlaceholderView = ({ title }: { title: string }) => (
   <div className="flex flex-col items-center justify-center h-[60vh] text-center">
@@ -26,9 +27,13 @@ const PlaceholderView = ({ title }: { title: string }) => (
 );
 
 export default function App() {
-  const { currentView, sidebarOpen, setSidebarOpen, isDarkMode, toggleDarkMode } = useUIStore();
+  const { currentView, setCurrentView, sidebarOpen, setSidebarOpen, isDarkMode, toggleDarkMode } = useUIStore();
   const [user, setUser] = useState<any>(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState('');
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => {
@@ -37,9 +42,27 @@ export default function App() {
     });
   }, []);
 
-  const login = async () => {
+  const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err: any) {
+      setAuthError(err.message);
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    try {
+      if (authMode === 'login') {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
+    } catch (err: any) {
+      setAuthError(err.message);
+    }
   };
 
   const renderView = () => {
@@ -52,16 +75,16 @@ export default function App() {
       case 'homepage': return <CMSPanel />;
       case 'theme': return <ThemeSettings />;
       case 'media': return <MediaLibrary />;
+      case 'profile': return <ProfilePage />;
       default: return <PlaceholderView title={currentView.charAt(0).toUpperCase() + currentView.slice(1)} />;
     }
   };
 
   if (loadingAuth) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-beige">
+      <div className="h-screen w-screen flex items-center justify-center bg-slate-50">
         <div className="relative">
-          <div className="w-16 h-16 border-4 border-sage/20 border-t-olive rounded-full animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-olive">HS</div>
+          <div className="w-12 h-12 border-2 border-emerald/20 border-t-emerald rounded-full animate-spin"></div>
         </div>
       </div>
     );
@@ -69,24 +92,71 @@ export default function App() {
 
   if (!user) {
     return (
-      <div className="h-screen w-screen flex flex-col items-center justify-center bg-beige p-6">
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-slate-50 p-6 overflow-y-auto">
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="glass max-w-md w-full p-10 rounded-[2.5rem] text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white max-w-sm w-full p-8 rounded-3xl shadow-2xl border border-slate-100"
         >
-          <div className="w-20 h-20 bg-olive rounded-3xl mx-auto flex items-center justify-center mb-8 rotate-12 shadow-2xl">
-            <LogIn className="text-cream w-10 h-10 -rotate-12" />
+          <div className="w-14 h-14 bg-olive rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-xl shadow-emerald-900/20">
+            <LogIn className="text-white w-7 h-7" />
           </div>
-          <h1 className="text-3xl font-bold text-olive mb-2">HerbaSense Admin</h1>
-          <p className="text-sage mb-10">Premium access to your herbal empire starts here.</p>
+          <h1 className="text-xl font-black text-slate-900 mb-1 text-center tracking-tight uppercase">Botanica Console</h1>
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8 text-center">Secure Admin Protocol</p>
+          
+          <form onSubmit={handleEmailAuth} className="space-y-4">
+            <div>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1.5 ml-1">Terminal ID (Email)</label>
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                placeholder="admin@botanica.ai"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1.5 ml-1">Access Key (Password)</label>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {authError && <p className="text-[10px] text-red-500 font-bold text-center mt-2">{authError}</p>}
+
+            <button 
+              type="submit"
+              className="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 mt-2"
+            >
+              {authMode === 'login' ? 'Initiate Access' : 'Register Service'}
+            </button>
+          </form>
+
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+            <div className="relative flex justify-center text-[10px] uppercase font-bold text-slate-400"><span className="bg-white px-3">Protocol Bypass</span></div>
+          </div>
+
           <button 
-            onClick={login}
-            className="w-full bg-olive text-cream py-4 rounded-2xl font-bold hover:bg-olive/90 transition-all flex items-center justify-center gap-3 shadow-lg shadow-olive/20"
+            onClick={loginWithGoogle}
+            className="w-full border border-slate-200 text-slate-600 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
           >
-            Authenticate via Google
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="Google" />
+            Continue with Google
           </button>
-          <p className="mt-6 text-[10px] text-sage uppercase tracking-widest">Enterprise Security Enabled</p>
+
+          <button 
+            onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
+            className="w-full mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-emerald-600 transition-colors"
+          >
+            {authMode === 'login' ? "Deploy new credentials?" : "Return to login"}
+          </button>
         </motion.div>
       </div>
     );
@@ -123,13 +193,22 @@ export default function App() {
               />
             </div>
             
-            <div className="flex items-center gap-4">
+            <div 
+              className="flex items-center gap-4 cursor-pointer hover:bg-slate-50 p-1.5 rounded-2xl transition-all"
+              onClick={() => setCurrentView('profile')}
+            >
               <div className="text-right hidden sm:block">
-                <p className="text-xs font-bold text-slate-900">{user.displayName}</p>
+                <p className="text-xs font-bold text-slate-900">{user.displayName || user.email?.split('@')[0]}</p>
                 <p className="text-[10px] text-slate-500 uppercase font-medium">System Architect</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-emerald p-0.5 overflow-hidden">
-                <img src={user.photoURL} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+              <div className="w-10 h-10 rounded-full bg-slate-200 border-2 border-emerald p-0.5 overflow-hidden flex items-center justify-center">
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-emerald text-white flex items-center justify-center font-bold text-xs uppercase rounded-full">
+                    {user.email?.charAt(0)}
+                  </div>
+                )}
               </div>
             </div>
           </div>

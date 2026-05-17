@@ -19,7 +19,8 @@ import {
   Palette,
   Type,
   FileText,
-  Users
+  Users,
+  User
 } from 'lucide-react';
 import { useUIStore } from '../lib/store';
 import { cn } from '../lib/utils';
@@ -41,6 +42,7 @@ const navItems = [
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'ai', label: 'AI Content Generator', icon: Sparkles },
   { id: 'customers', label: 'Customers', icon: Users },
+  { id: 'profile', label: 'Profile', icon: User },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 

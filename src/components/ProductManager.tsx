@@ -188,5 +188,3 @@ export const ProductManager = () => {
     </div>
   );
 };
-
-import { Clock } from 'lucide-react';
